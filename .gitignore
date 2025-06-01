@@ -27,9 +27,7 @@ build/
 
 # Spring Boot
 *.properties.local
-application-*.yml
-!application.yml
-!application-example.yml
+application-local.yml
 
 # Node
 node_modules/
@@ -66,6 +64,7 @@ Thumbs.db
 .env.development.local
 .env.test.local
 .env.production.local
+.env.*
 
 # Logs
 logs/

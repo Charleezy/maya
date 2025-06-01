@@ -1,0 +1,33 @@
+spring:
+  datasource:
+    url: jdbc:postgresql://${DB_HOST:localhost}:${DB_PORT:5432}/${DB_NAME:maya}
+    username: ${POSTGRES_USER:postgres}
+    password: ${POSTGRES_PASSWORD:password}
+  jpa:
+    hibernate:
+      ddl-auto: update
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.PostgreSQLDialect
+    show-sql: ${SHOW_SQL:false}
+
+nomi:
+  #api-key: ${NOMI_API_KEY:}  # In production users will provide api keys
+  base-url: ${NOMI_BASE_URL:https://api.nomi.ai/v1}
+  message-timeout: ${NOMI_MESSAGE_TIMEOUT:30}
+
+google:
+  calendar:
+    application-name: ${GOOGLE_APP_NAME:Maya AI Task Scheduler}
+    credentials-path: ${GOOGLE_CREDENTIALS_PATH:/credentials.json}
+    tokens-directory-path: ${GOOGLE_TOKENS_PATH:tokens}
+    scopes: 
+      - https://www.googleapis.com/auth/calendar
+
+server:
+  port: ${PORT:8080}
+
+# For local development:
+# 1. Create application-local.yml in this directory
+# 2. Add your local configuration values
+# 3. Run with -Dspring.profiles.active=local 
