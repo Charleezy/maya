@@ -53,6 +53,7 @@ yarn-error.log*
 .classpath
 .settings/
 *.sublime-workspace
+.cursor/*
 
 # OS
 .DS_Store
