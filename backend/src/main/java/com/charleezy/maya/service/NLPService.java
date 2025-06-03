@@ -38,6 +38,17 @@ import java.util.regex.Pattern;
 @Service
 public class NLPService {
 
+    private final LanguageServiceClient languageServiceClient;
+
+    public NLPService() throws IOException {
+        this(LanguageServiceClient.create());
+    }
+
+    // Constructor for testing
+    NLPService(LanguageServiceClient languageServiceClient) {
+        this.languageServiceClient = languageServiceClient;
+    }
+
     public record EntityInfo(String name, String type, float salience) {}
 
     private static final Set<String> TEMPORAL_WORDS = Set.of(
@@ -68,7 +79,7 @@ public class NLPService {
 
         log.info("Analyzing text: {}", text);
         
-        try (LanguageServiceClient language = LanguageServiceClient.create()) {
+        try {
             Document doc = Document.newBuilder()
                     .setContent(text)
                     .setType(Document.Type.PLAIN_TEXT)
@@ -86,8 +97,8 @@ public class NLPService {
                     .setEncodingType(EncodingType.UTF8)
                     .build();
 
-            AnalyzeEntitiesResponse entityResponse = language.analyzeEntities(entityRequest);
-            AnalyzeSyntaxResponse syntaxResponse = language.analyzeSyntax(syntaxRequest);
+            AnalyzeEntitiesResponse entityResponse = languageServiceClient.analyzeEntities(entityRequest);
+            AnalyzeSyntaxResponse syntaxResponse = languageServiceClient.analyzeSyntax(syntaxRequest);
 
             Set<EntityInfo> entities = new LinkedHashSet<>();
             
@@ -164,9 +175,6 @@ public class NLPService {
             }
 
             return new ArrayList<>(entities);
-        } catch (IOException e) {
-            log.error("Failed to create LanguageServiceClient", e);
-            throw new RuntimeException("Failed to initialize NLP service", e);
         } catch (Exception e) {
             log.error("Unexpected error during text analysis", e);
             throw new RuntimeException("Failed to analyze text: " + e.getMessage(), e);
