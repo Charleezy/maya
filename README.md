@@ -13,6 +13,9 @@ NOMI_API_KEY=your-nomi-api-key-here
 # Database Configuration
 POSTGRES_USER=postgres
 POSTGRES_PASSWORD=your-postgres-password-here
+
+# Google Cloud Configuration
+GOOGLE_APPLICATION_CREDENTIALS=path/to/your/google-cloud-credentials.json
 ```
 
 You can set these environment variables in several ways:
@@ -20,7 +23,29 @@ You can set these environment variables in several ways:
 2. Set them in your system environment
 3. Pass them as command-line arguments when running the application
 
-**Important**: Never commit your actual API keys or passwords to version control!
+### Google Cloud Setup
+
+1. Create a Google Cloud project or use an existing one
+2. Enable the Cloud Natural Language API:
+   - Go to [Google Cloud Console](https://console.cloud.google.com)
+   - Navigate to "APIs & Services" > "Library"
+   - Search for "Cloud Natural Language API"
+   - Click "Enable"
+3. Create service account credentials:
+   - Go to "APIs & Services" > "Credentials"
+   - Click "Create Credentials" > "Service Account"
+   - Fill in the service account details
+   - Download the JSON key file
+4. Set the `GOOGLE_APPLICATION_CREDENTIALS` environment variable:
+   ```powershell
+   # Windows PowerShell
+   $env:GOOGLE_APPLICATION_CREDENTIALS="C:\path\to\your\credentials.json"
+   
+   # Linux/MacOS
+   export GOOGLE_APPLICATION_CREDENTIALS="/path/to/your/credentials.json"
+   ```
+
+**Important**: Never commit your actual API keys, credentials, or passwords to version control!
 
 ## Features
 
@@ -72,3 +97,5 @@ maya/
 - PostgreSQL
 - Google Cloud Platform account (for Calendar API)
 - Nomi API key 
+
+TODO: look into using spacy over google cloud NLP later
