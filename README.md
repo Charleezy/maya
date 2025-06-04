@@ -4,7 +4,7 @@ A service that integrates AI chatbots with task scheduling and time management f
 
 ## Environment Setup
 
-Before running the application, you need to set up the following environment variables:
+Before running the application, you need to set up the following environment variables either through the console or in application.properties-local.yml:
 
 ```bash
 # Nomi API Configuration
@@ -22,6 +22,8 @@ You can set these environment variables in several ways:
 1. Create a `.env` file in the root directory (recommended for development)
 2. Set them in your system environment
 3. Pass them as command-line arguments when running the application
+
+When developing in local use the "Dspring-boot.run.profiles=local" runtime variable
 
 ### Google Cloud Setup
 
