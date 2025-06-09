@@ -28,7 +28,7 @@ public class DucklingNLPService extends AbstractNLPService {
     private final DucklingConfig ducklingConfig;
     private static final Pattern TASK_PATTERN = Pattern.compile("to\s+([^\n]+)$");
 
-    public HttpResponse<String> getDucklingResponse(String text) throws IOException, InterruptedException {
+    public String getDucklingResponse(String text) throws IOException, InterruptedException {
         String formData = String.format("locale=en_GB&text=%s", text);
         log.info("Sending request to Duckling: {}", formData);
         
@@ -43,47 +43,7 @@ public class DucklingNLPService extends AbstractNLPService {
         log.info("Received response from Duckling: {}", response);
 
         // Create a simple HttpResponse implementation to maintain compatibility
-        return new HttpResponse<String>() {
-            @Override
-            public int statusCode() {
-                return 200;
-            }
-
-            @Override
-            public HttpRequest request() {
-                return null;
-            }
-
-            @Override
-            public Optional<HttpResponse<String>> previousResponse() {
-                return Optional.empty();
-            }
-
-            @Override
-            public HttpHeaders headers() {
-                return HttpHeaders.of(Map.of(), (k, v) -> true);
-            }
-
-            @Override
-            public String body() {
-                return response;
-            }
-
-            @Override
-            public Optional<SSLSession> sslSession() {
-                return Optional.empty();
-            }
-
-            @Override
-            public URI uri() {
-                return URI.create(ducklingConfig.getBaseUrl() + ducklingConfig.getParseEndpoint());
-            }
-
-            @Override
-            public HttpClient.Version version() {
-                return HttpClient.Version.HTTP_1_1;
-            }
-        };
+        return response;
     }
 
     @Override

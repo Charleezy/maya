@@ -44,11 +44,10 @@ public class NLPController {
 
             text = URLEncoder.encode(text, StandardCharsets.UTF_8);
             log.info("Testing Duckling with text: {}", text);
-            HttpResponse<String> response = ducklingNLPService.getDucklingResponse(text);
+            String response = ducklingNLPService.getDucklingResponse(text);
             return ResponseEntity.ok()
                 .body(Map.of(
-                    "status", response.statusCode(),
-                    "body", response.body()
+                    "body", response
                 ));
         } catch (IOException | InterruptedException e) {
             log.error("Error calling Duckling service", e);
