@@ -123,12 +123,7 @@
 			<version>2.37.0</version>
 		</dependency>
 		
-		<!-- Date/Time parsing -->
-		<dependency>
-			<groupId>com.joestelmach</groupId>
-			<artifactId>natty</artifactId>
-			<version>0.13</version>
-		</dependency>
+
 		
 		<!-- Development tools -->
 		<dependency>
