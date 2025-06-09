@@ -1,6 +1,6 @@
 package com.charleezy.maya.controller;
 
-import com.charleezy.maya.service.NLPService;
+import com.charleezy.maya.service.DucklingNLPService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
@@ -9,7 +9,10 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import javax.annotation.PostConstruct;
 
-import java.util.List;
+import java.io.IOException;
+import java.net.URLEncoder;
+import java.net.http.HttpResponse;
+import java.nio.charset.StandardCharsets;
 import java.util.Map;
 
 @Slf4j
@@ -20,7 +23,7 @@ import java.util.Map;
 @ConditionalOnProperty(name = "nlp.controller.enabled", havingValue = "true")  // Only active if explicitly enabled
 public class NLPController {
 
-    private final NLPService nlpService;
+    private final DucklingNLPService ducklingNLPService;
 
     @PostConstruct
     public void init() {
@@ -28,23 +31,29 @@ public class NLPController {
     }
 
     /**
-     * Direct NLP analysis endpoint - FOR LOCAL TESTING ONLY
-     * WARNING: In production, NLP requests should go through a message queue
+     * Test endpoint for Duckling NLP service - FOR LOCAL TESTING ONLY
      */
-    @PostMapping("/analyze")
-    public ResponseEntity<?> analyzeText(@RequestBody String text) {
+    @PostMapping("/duckling/test")
+    public ResponseEntity<?> testDuckling(@RequestBody Map<String, String> request) {
         try {
-            log.info("Received text analysis request");
-            List<NLPService.EntityInfo> entities = nlpService.analyzeText(text);
-            return ResponseEntity.ok(entities);
-        } catch (IllegalArgumentException e) {
-            log.warn("Invalid request: {}", e.getMessage());
-            return ResponseEntity.badRequest()
-                .body(Map.of("error", e.getMessage()));
-        } catch (Exception e) {
-            log.error("Error processing request", e);
+            String text = request.get("text");
+            if (text == null || text.trim().isEmpty()) {
+                return ResponseEntity.badRequest()
+                    .body(Map.of("error", "Text field is required"));
+            }
+
+            text = URLEncoder.encode(text, StandardCharsets.UTF_8);
+            log.info("Testing Duckling with text: {}", text);
+            HttpResponse<String> response = ducklingNLPService.getDucklingResponse(text);
+            return ResponseEntity.ok()
+                .body(Map.of(
+                    "status", response.statusCode(),
+                    "body", response.body()
+                ));
+        } catch (IOException | InterruptedException e) {
+            log.error("Error calling Duckling service", e);
             return ResponseEntity.internalServerError()
-                .body(Map.of("error", "Failed to analyze text: " + e.getMessage()));
+                .body(Map.of("error", "Failed to call Duckling: " + e.getMessage()));
         }
     }
 } 

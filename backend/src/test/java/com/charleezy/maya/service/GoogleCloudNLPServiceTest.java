@@ -16,16 +16,16 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
-class NLPServiceTest {
+class GoogleCloudNLPServiceTest {
 
     @Mock
     private LanguageServiceClient languageServiceClient;
 
-    private NLPService nlpService;
+    private GoogleCloudNLPService nlpService;
 
     @BeforeEach
     void setUp() {
-        nlpService = new NLPService(languageServiceClient);
+        nlpService = new GoogleCloudNLPService(languageServiceClient);
     }
 
     @Test
@@ -71,7 +71,7 @@ class NLPServiceTest {
         when(languageServiceClient.analyzeSyntax(any(AnalyzeSyntaxRequest.class))).thenReturn(syntaxResponse);
 
         // When
-        List<NLPService.EntityInfo> result = nlpService.analyzeText(input);
+        List<GoogleCloudNLPService.EntityInfo> result = nlpService.analyzeText(input);
 
         // Then
         assertThat(result).hasSize(2);
@@ -127,7 +127,7 @@ class NLPServiceTest {
         when(languageServiceClient.analyzeSyntax(any(AnalyzeSyntaxRequest.class))).thenReturn(syntaxResponse);
 
         // When
-        List<NLPService.EntityInfo> result = nlpService.analyzeText(input);
+        List<GoogleCloudNLPService.EntityInfo> result = nlpService.analyzeText(input);
 
         // Then
         assertThat(result).hasSize(2);

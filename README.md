@@ -47,6 +47,13 @@ When developing in local use the "Dspring-boot.run.profiles=local" runtime varia
    export GOOGLE_APPLICATION_CREDENTIALS="/path/to/your/credentials.json"
    ```
 
+### Duckling implementation setup
+Pull a docker image
+https://hub.docker.com/r/rasa/duckling
+
+run it localy on port 8000 
+docker run -p 8000:8000 rasa/duckling
+
 **Important**: Never commit your actual API keys, credentials, or passwords to version control!
 
 ## Features

@@ -10,7 +10,7 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.WebClient;
-import reactor.core.publisher.Mono;
+import org.springframework.beans.factory.annotation.Qualifier;
 
 import java.util.List;
 import java.util.Map;
@@ -19,36 +19,44 @@ import java.util.Map;
 @RequiredArgsConstructor
 public class NomiServiceImpl implements NomiService {
     private final NomiConfig nomiConfig;
-    private final WebClient webClient;
+    @Qualifier("nomiWebClient")
+    private final WebClient nomiWebClient;
 
-    /*TODO can't be blocking, need to use reactive programming */
     @Override
     public NomiResponse sendMessage(String nomiId, NomiMessage message) {
-        return webClient.post()
-                .uri("/nomis/{id}/chat", nomiId)
-                .contentType(MediaType.APPLICATION_JSON)
-                .bodyValue(message)
-                .retrieve()
-                .bodyToMono(NomiResponse.class)
-                .block();
+        return nomiWebClient.post()
+            .uri(nomiConfig.getBaseUrl() + "/chat/completions")
+            .header(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE)
+            .header("X-API-KEY", nomiConfig.getApiKey())
+            .bodyValue(Map.of(
+                "messages", List.of(Map.of(
+                    "role", "user",
+                    "content", message.getMessageText()
+                )),
+                "model", "gpt-3.5-turbo",
+                "temperature", 0.7,
+                "max_tokens", 150
+            ))
+            .retrieve()
+            .bodyToMono(NomiResponse.class)
+            .block();
     }
 
     @Override
     public List<NomiResponse.Nomi> listNomis() {
-        return webClient.get()
-                .uri("/nomis")
-                .retrieve()
-                .bodyToMono(new ParameterizedTypeReference<Map<String, List<NomiResponse.Nomi>>>() {})
-                .map(response -> response.get("nomis"))
-                .block();
+        return nomiWebClient.get()
+            .uri("/nomis")
+            .retrieve()
+            .bodyToMono(new ParameterizedTypeReference<List<NomiResponse.Nomi>>() {})
+            .block();
     }
 
     @Override
     public NomiResponse.Nomi getNomi(String nomiId) {
-        return webClient.get()
-                .uri("/nomis/{id}", nomiId)
-                .retrieve()
-                .bodyToMono(NomiResponse.Nomi.class)
-                .block();
+        return nomiWebClient.get()
+            .uri("/nomis/{id}", nomiId)
+            .retrieve()
+            .bodyToMono(NomiResponse.Nomi.class)
+            .block();
     }
 } 
